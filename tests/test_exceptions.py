@@ -12,6 +12,8 @@ from src.utils.exceptions import (
     APIError,
     ConfigurationError,
     ContextOverflowError,
+    FileOperationError,
+    SecurityError,
     SubagentError,
     ToolError,
     ValidationError,
@@ -203,6 +205,73 @@ class TestValidationError:
         assert "Details:" in str(error)
 
 
+class TestFileOperationError:
+    """Tests for the FileOperationError exception."""
+
+    def test_basic_message(self) -> None:
+        """Test basic file operation error."""
+        error = FileOperationError("File not found")
+        assert "File not found" in str(error)
+
+    def test_with_path(self) -> None:
+        """Test file operation error with path."""
+        error = FileOperationError("Permission denied", path="/etc/passwd")
+        assert "Path: /etc/passwd" in str(error)
+        assert "Permission denied" in str(error)
+
+    def test_with_operation(self) -> None:
+        """Test file operation error with operation."""
+        error = FileOperationError("Failed", operation="read")
+        assert "Operation: read" in str(error)
+
+    def test_with_all_fields(self) -> None:
+        """Test file operation error with all fields."""
+        error = FileOperationError(
+            "Cannot write file",
+            path="/tmp/test.txt",
+            operation="write",
+            details={"errno": 13, "reason": "Permission denied"},
+        )
+        assert "Operation: write" in str(error)
+        assert "Path: /tmp/test.txt" in str(error)
+        assert "Cannot write file" in str(error)
+        assert "Details:" in str(error)
+
+
+class TestSecurityError:
+    """Tests for the SecurityError exception."""
+
+    def test_basic_message(self) -> None:
+        """Test basic security error."""
+        error = SecurityError("Access denied")
+        assert "SECURITY VIOLATION" in str(error)
+        assert "Access denied" in str(error)
+
+    def test_with_violation_type(self) -> None:
+        """Test security error with violation type."""
+        error = SecurityError("Path traversal detected", violation_type="path_traversal")
+        assert "Type: path_traversal" in str(error)
+
+    def test_with_resource(self) -> None:
+        """Test security error with resource."""
+        error = SecurityError("Blocked import", resource="os")
+        assert "Resource: os" in str(error)
+
+    def test_with_all_fields(self) -> None:
+        """Test security error with all fields."""
+        error = SecurityError(
+            "Attempted sandbox escape",
+            violation_type="sandbox_escape",
+            resource="subprocess.call",
+            details={"blocked_by": "security_filter"},
+        )
+        assert "SECURITY VIOLATION" in str(error)
+        assert "Type: sandbox_escape" in str(error)
+        assert "Resource: subprocess.call" in str(error)
+        assert "Attempted sandbox escape" in str(error)
+        assert "Details:" in str(error)
+
+
 class TestExceptionInheritance:
     """Tests for exception inheritance hierarchy."""
 
@@ -215,6 +284,8 @@ class TestExceptionInheritance:
             ContextOverflowError("test"),
             APIError("test"),
             ValidationError("test"),
+            FileOperationError("test"),
+            SecurityError("test"),
         ]
 
         for exc in exceptions:
@@ -229,6 +300,8 @@ class TestExceptionInheritance:
             ContextOverflowError,
             APIError,
             ValidationError,
+            FileOperationError,
+            SecurityError,
         ]
 
         for exc_class in exceptions_classes:

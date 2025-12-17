@@ -1,0 +1,166 @@
+# Deep Agent Configuration
+# ========================
+# This file contains all configuration settings for the multi-agent system.
+# Environment variables can override these settings using the format:
+# ${ENV_VAR_NAME} or by setting values in .env file
+
+# =============================================================================
+# Main Orchestrator Configuration
+# =============================================================================
+orchestrator:
+  # LLM model for the main orchestrator agent
+  model: "claude-sonnet-4-20250514"
+
+  # Maximum tokens for orchestrator context window
+  max_tokens: 80000
+
+  # Token threshold that triggers context compression
+  compression_threshold: 60000
+
+  # Temperature for response generation (0.0 = deterministic, 1.0 = creative)
+  temperature: 0.7
+
+# =============================================================================
+# Subagent Configurations
+# =============================================================================
+subagents:
+  # Research subagent - handles web search and information gathering
+  research:
+    model: "claude-sonnet-4-20250514"
+    max_context: 50000
+    tools:
+      - "internet_search"
+      - "read_file"
+      - "write_file"
+    temperature: 0.7
+
+  # Code subagent - handles code generation and execution
+  code:
+    model: "claude-sonnet-4-20250514"
+    max_context: 50000
+    tools:
+      - "python_repl"
+      - "read_file"
+      - "write_file"
+    temperature: 0.3  # Lower temperature for more precise code generation
+
+  # Analysis subagent - handles data analysis and insight generation
+  analysis:
+    model: "claude-sonnet-4-20250514"
+    max_context: 50000
+    tools:
+      - "analyze_data"
+      - "read_file"
+      - "write_file"
+    temperature: 0.7
+
+# =============================================================================
+# Middleware Configuration
+# =============================================================================
+middleware:
+  # Context compression settings
+  compression:
+    enabled: true
+    threshold_tokens: 60000    # Trigger compression at this token count
+    target_tokens: 40000       # Target token count after compression
+    keep_recent_messages: 20   # Number of recent messages to preserve
+
+  # Monitoring and metrics settings
+  monitoring:
+    enabled: true
+    log_level: "INFO"          # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    track_tokens: true         # Track token usage per request
+    track_latency: true        # Track response latency
+
+  # Per-subagent context filtering (Phase 2 feature)
+  context_filter:
+    enabled: false             # Disabled in MVP
+    filters:
+      research:
+        exclude_patterns: ["```python", "def ", "class "]
+      code:
+        include_patterns: ["```", "def ", "class ", "import "]
+      analysis:
+        exclude_patterns: ["http://", "https://"]
+
+# =============================================================================
+# File System Configuration
+# =============================================================================
+filesystem:
+  # Base path for agent file storage
+  base_path: "./data/filesystem"
+
+  # Maximum file size in MB
+  max_file_size_mb: 10
+
+  # Subdirectories for different types of files
+  subdirectories:
+    - "research"
+    - "code"
+    - "analysis"
+    - "summaries"
+
+# =============================================================================
+# External Services Configuration
+# =============================================================================
+external_services:
+  # Tavily web search API
+  tavily:
+    api_key_env: "TAVILY_API_KEY"
+    max_results: 10
+    search_depth: "advanced"   # basic or advanced
+
+  # Anthropic Claude API
+  anthropic:
+    api_key_env: "ANTHROPIC_API_KEY"
+
+  # OpenAI API (optional)
+  openai:
+    api_key_env: "OPENAI_API_KEY"
+
+  # LangSmith monitoring (optional)
+  langsmith:
+    api_key_env: "LANGSMITH_API_KEY"
+    enabled: false             # Set to true to enable LangSmith tracing
+
+# =============================================================================
+# Performance Tuning
+# =============================================================================
+performance:
+  # Maximum depth of subagent spawning (prevents infinite recursion)
+  max_subagent_depth: 2
+
+  # Maximum number of parallel subagents
+  max_parallel_subagents: 3
+
+  # Request timeout in seconds
+  request_timeout_seconds: 600
+
+  # Retry configuration for API calls
+  retry_attempts: 3
+  retry_delay_seconds: 2
+
+# =============================================================================
+# Security Settings
+# =============================================================================
+security:
+  # Enable sandboxed code execution
+  sandbox_code_execution: true
+
+  # Code execution timeout in seconds
+  code_execution_timeout: 30
+
+  # Allowed file extensions for agent file operations
+  allowed_file_extensions:
+    - ".txt"
+    - ".py"
+    - ".json"
+    - ".csv"
+    - ".md"
+
+  # Python imports that are blocked in code execution
+  blocked_imports:
+    - "os"
+    - "subprocess"
+    - "sys"
+    - "shutil"

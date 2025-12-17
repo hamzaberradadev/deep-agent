@@ -1,0 +1,19 @@
+# Deep Agent - Production Dependencies
+# Python 3.10+ required
+
+# LangGraph and LangChain
+langgraph>=0.2.0
+langchain>=0.3.0
+langchain-anthropic>=0.3.0
+langchain-openai>=0.3.0
+langchain-experimental>=0.3.0
+
+# Web Search
+tavily-python>=0.3.0
+
+# Configuration
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# Token Counting
+tiktoken>=0.5.0

@@ -55,6 +55,28 @@ subagents:
     temperature: 0.7
 
 # =============================================================================
+# Logging Configuration
+# =============================================================================
+logging:
+  # Log level for the application (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  level: "INFO"
+
+  # Path to log file (null for console only)
+  log_file: "logs/agent.log"
+
+  # Maximum log file size in bytes before rotation (default: 10MB)
+  max_bytes: 10485760
+
+  # Number of backup log files to keep
+  backup_count: 5
+
+  # Use colored output for console
+  use_colors: true
+
+  # Use detailed format with file/line info (useful for debugging)
+  detailed: false
+
+# =============================================================================
 # Middleware Configuration
 # =============================================================================
 middleware:

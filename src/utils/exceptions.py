@@ -278,3 +278,93 @@ class ValidationError(AgentError):
         if self.details:
             base = f"{base} | Details: {self.details}"
         return base
+
+
+class FileOperationError(AgentError):
+    """
+    Exception raised when file operations fail.
+
+    This includes:
+    - File read/write failures
+    - Permission errors
+    - Path validation errors
+    - File not found errors
+    """
+
+    def __init__(
+        self,
+        message: str,
+        path: str | None = None,
+        operation: str | None = None,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """
+        Initialize the FileOperationError.
+
+        Args:
+            message: Human-readable error message.
+            path: The file path that caused the error.
+            operation: The operation that failed (read, write, delete, etc.).
+            details: Optional dictionary with additional error details.
+        """
+        super().__init__(message, details)
+        self.path = path
+        self.operation = operation
+
+    def __str__(self) -> str:
+        """Return a string representation of the error."""
+        parts = []
+        if self.operation:
+            parts.append(f"Operation: {self.operation}")
+        if self.path:
+            parts.append(f"Path: {self.path}")
+        parts.append(self.message)
+        base = " | ".join(parts)
+        if self.details:
+            base = f"{base} | Details: {self.details}"
+        return base
+
+
+class SecurityError(AgentError):
+    """
+    Exception raised when security violations are detected.
+
+    This includes:
+    - Directory traversal attempts
+    - Blocked import attempts in code execution
+    - Unauthorized file access
+    - Sandbox escape attempts
+    """
+
+    def __init__(
+        self,
+        message: str,
+        violation_type: str | None = None,
+        resource: str | None = None,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """
+        Initialize the SecurityError.
+
+        Args:
+            message: Human-readable error message.
+            violation_type: The type of security violation detected.
+            resource: The resource that was involved in the violation.
+            details: Optional dictionary with additional error details.
+        """
+        super().__init__(message, details)
+        self.violation_type = violation_type
+        self.resource = resource
+
+    def __str__(self) -> str:
+        """Return a string representation of the error."""
+        parts = ["SECURITY VIOLATION"]
+        if self.violation_type:
+            parts.append(f"Type: {self.violation_type}")
+        if self.resource:
+            parts.append(f"Resource: {self.resource}")
+        parts.append(self.message)
+        base = " | ".join(parts)
+        if self.details:
+            base = f"{base} | Details: {self.details}"
+        return base

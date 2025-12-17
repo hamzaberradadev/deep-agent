@@ -2,7 +2,7 @@
 Utility functions for the Deep Agent system.
 
 This module contains token counting, file management,
-and custom exception definitions.
+custom exception definitions, and logging configuration.
 """
 
 from src.utils.exceptions import (
@@ -13,6 +13,8 @@ from src.utils.exceptions import (
     ContextOverflowError,
     APIError,
     ValidationError,
+    FileOperationError,
+    SecurityError,
 )
 from src.utils.token_counter import (
     count_tokens,
@@ -28,6 +30,16 @@ from src.utils.file_manager import (
     delete_file,
     file_exists,
 )
+from src.utils.logging_config import (
+    setup_logging,
+    setup_logging_from_config,
+    setup_logging_from_dict,
+    get_logger,
+    set_module_level,
+    is_logging_configured,
+    reset_logging,
+    ColoredFormatter,
+)
 
 __all__ = [
     # Exceptions
@@ -38,6 +50,8 @@ __all__ = [
     "ContextOverflowError",
     "APIError",
     "ValidationError",
+    "FileOperationError",
+    "SecurityError",
     # Token counting
     "count_tokens",
     "estimate_tokens",
@@ -50,4 +64,13 @@ __all__ = [
     "list_files",
     "delete_file",
     "file_exists",
+    # Logging
+    "setup_logging",
+    "setup_logging_from_config",
+    "setup_logging_from_dict",
+    "get_logger",
+    "set_module_level",
+    "is_logging_configured",
+    "reset_logging",
+    "ColoredFormatter",
 ]

@@ -129,10 +129,42 @@ def truncate_to_token_limit(
     return encoding.decode(truncated_tokens)
 
 
+def is_within_limit(
+    content: str | list[dict[str, Any]] | dict[str, Any],
+    max_tokens: int,
+    encoding_name: str = DEFAULT_ENCODING,
+) -> bool:
+    """
+    Check if content fits within a token limit.
+
+    This function checks whether the given content (string, message,
+    or list of messages) fits within the specified token limit.
+
+    Args:
+        content: The content to check (string, message dict, or list of messages).
+        max_tokens: Maximum number of tokens allowed.
+        encoding_name: The tiktoken encoding to use.
+
+    Returns:
+        bool: True if the content fits within the limit, False otherwise.
+
+    Examples:
+        >>> is_within_limit("Hello, world!", 10)
+        True
+        >>> is_within_limit("Hello, world!", 1)
+        False
+        >>> is_within_limit([{"role": "user", "content": "Hi"}], 100)
+        True
+    """
+    token_count = count_tokens(content, encoding_name)
+    return token_count <= max_tokens
+
+
 __all__ = [
     "count_tokens",
     "estimate_tokens",
     "truncate_to_token_limit",
+    "is_within_limit",
     "get_encoding",
     "DEFAULT_ENCODING",
 ]

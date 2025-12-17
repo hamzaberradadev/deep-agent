@@ -1,0 +1,20 @@
+# Deep Agent - Development Dependencies
+# Install after production dependencies: pip install -r requirements-dev.txt
+
+# Include production dependencies
+-r requirements.txt
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+
+# Code Quality
+black>=23.0.0
+ruff>=0.1.0
+mypy>=1.0.0
+
+# Type Stubs
+types-PyYAML>=6.0.0
+types-python-dotenv>=1.0.0
